@@ -1,0 +1,30 @@
+:: Cookbook Name:: reginjector
+:: Recipe:: multiple
+::
+:: Copyright 2010, Smashrun, Inc.
+:: Author:: <%= @author_name %> <<%= @author_email %>>
+:: initial version 2011:04:10 04:01:00 EST
+::
+:: templated - <%= @regdeploybat_template %> source file 
+:: becomes <%= @regdeploybat %> on the server
+:: deploy registry changes via generic batch file
+
+
+@echo off
+cls
+
+:: all necessary ARGS supplied by chef
+set workingDirectory=<%= @working_dir %>
+set systemDirectory=<%= @system_dir %>
+set baseRegistryFile=%1
+set regDeployLog=%2
+
+:: deploy registry changes
+echo.deploying registry changes
+cmd /c "%systemDirectory%\regedt32.exe" /s %workingDirectory%\%baseRegistryFile% > %workingDirectory%\%regDeployLog% 2>&1
+echo.timestamping the logfile
+cmd /c "date /t" >> %workingDirectory%\%regDeployLog%
+cmd /c "time /t" >> %workingDirectory%\%regDeployLog%
+echo.registry changes done
+
+exit /B 0
