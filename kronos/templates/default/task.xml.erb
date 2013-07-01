@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Date><%= @windate %>T<%= @wintime %></Date>
+    <Author>kronos</Author>
+    <Description>Scheduled task created and managed by Chef</Description>
+    <Documentation><%= @basewiki %><%= @task_info['taskname'] %></Documentation>
+    <Version></Version>
+	<URI>kronos-<%= @task_info['taskname'] %></URI>
+  </RegistrationInfo>
+  <Triggers>
+	<% if @task_info['schedule'] == "MONTHLY" %>
+    <CalendarTrigger>
+      <StartBoundary>2012-01-01T<%= @task_info['starttime'] %></StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByMonth>
+        <DaysOfMonth>
+          <Day><%= @task_info['modifier'] %></Day>
+        </DaysOfMonth>
+        <Months>
+          <January />
+          <February />
+          <March />
+          <April />
+          <May />
+          <June />
+          <July />
+          <August />
+          <September />
+          <October />
+          <November />
+          <December />
+        </Months>
+      </ScheduleByMonth>
+    </CalendarTrigger>
+	<% end -%>
+	<% if @task_info['schedule'] == "WEEKLY" %>
+    <CalendarTrigger>
+      <StartBoundary>2012-01-01T<%= @task_info['starttime'] %></StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByWeek>
+        <WeeksInterval>1</WeeksInterval>
+        <DaysOfWeek>
+        <% case @task_info['modifier'].to_i %>
+          <% when 0 %>
+          <Sunday/>
+          <% when 1 %>
+          <Monday/>
+          <% when 2 %>
+          <Tuesday/>
+          <% when 3 %>
+          <Wednesday/>
+          <% when 4 %>
+          <Thursday/>
+          <% when 5 %>
+          <Friday/>
+          <% when 6 %>
+          <Saturday/>
+          <% end %>
+        </DaysOfWeek>
+      </ScheduleByWeek>
+    </CalendarTrigger>
+	<% end -%>
+	<% if @task_info['schedule'] == "DAILY" %>
+    <CalendarTrigger>
+      <StartBoundary>2012-01-01T<%= @task_info['starttime'] %></StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByDay>
+        <DaysInterval>1</DaysInterval>
+      </ScheduleByDay>
+    </CalendarTrigger>
+	<% end -%>
+	<% if @task_info['schedule'] == "HOURLY" %>
+    <TimeTrigger>
+      <Repetition>
+        <Interval>PT<%= @task_info['modifier'] %>H</Interval>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+      <StartBoundary>2012-01-01T<%= @task_info['starttime'] %></StartBoundary>
+      <Enabled>true</Enabled>
+    </TimeTrigger>
+	<% end -%>
+	<% if @task_info['schedule'] == "MINUTE" %>
+    <TimeTrigger>
+      <Repetition>
+        <Interval>PT<%= @task_info['modifier'] %>M</Interval>
+        <StopAtDurationEnd>false</StopAtDurationEnd>
+      </Repetition>
+      <StartBoundary>2012-01-01T<%= @task_info['starttime'] %></StartBoundary>
+      <Enabled>true</Enabled>
+    </TimeTrigger>
+	<% end -%>
+  </Triggers>
+  <Settings>
+    <IdleSettings>
+      <Duration>PT10M</Duration>
+      <WaitTimeout>PT1H</WaitTimeout>
+      <StopOnIdleEnd>false</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>false</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>PT1H</ExecutionTimeLimit>
+    <Priority>7</Priority>
+  </Settings>
+  <Principals>
+    <Principal id="Author">
+      <UserId>SYSTEM</UserId>
+      <RunLevel>LeastPrivilege</RunLevel>
+    </Principal>
+  </Principals>
+  <Actions Context="Author">
+    <Exec>
+      <Command><%= @task_info['taskcommand'] %></Command>
+      <Arguments><%= @task_info['taskargument'] %></Arguments>
+    </Exec>
+  </Actions>
+</Task>

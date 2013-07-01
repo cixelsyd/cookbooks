@@ -1,0 +1,22 @@
+:: <%= @author_name %> / <%= @author_email %>
+:: meant to be used by scheduled tasks
+:: execute defrag, drive letter is ARG1
+:: and redirect output to .log
+:: initial version 2011:09:27 19:01:00 EST
+:: batch file created via kronos
+
+@echo off
+
+echo.chef timestamping the logfile
+cmd /c "date /t" > %1:\analyze-frag-%1.log
+cmd /c "time /t" >> %1:\analyze-frag-%1.log
+
+<%= @sysdir %>\defrag.exe %1: -a -v >> %1:\analyze-frag-%1.log 2>&1
+echo.defrag analysis done
+
+echo.chef timestamping the logfile
+cmd /c "date /t" >> %1:\analyze-frag-%1.log
+cmd /c "time /t" >> %1:\analyze-frag-%1.log
+exit /B 0
+
+

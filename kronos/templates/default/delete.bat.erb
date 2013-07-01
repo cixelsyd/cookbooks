@@ -1,0 +1,14 @@
+:: <%= @author_name %> / <%= @author_email %>
+:: meant to be used by scheduled tasks
+:: just delete file ARG1
+:: initial version 2011:09:27 19:01:00 EST
+:: batch file created via kronos
+
+@echo off
+cls
+
+@DEL /S /Q /F "%1"
+
+exit /B 0
+
+

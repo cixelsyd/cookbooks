@@ -1,0 +1,32 @@
+:: chef template <%= @basebat_template %>
+:: becomes <%= @basebat %> on the server
+:: generic windows 2003 task creation
+:: <%= @author_name %> / <%= @author_email %>
+:: requires chef / internet connectivity to opsware git repo
+:: initial version 2011:09:27 19:01:00 EST
+
+:: everything needed passed via chef
+:: batch file created via kronos
+
+@echo off
+cls
+
+:: start by deleting all tasks
+:: hack obviates necessity of saving state on server
+:: the bad news is we loose the task run history - oh well
+:: any non-managed tasks are nuked as well - bummer
+cmd /c <%= @system_dir %>\schtasks.exe /delete /tn * /f
+:: new task list every time
+echo.re-create new tasks every time
+<% @task_info.each do |task| -%>
+cmd /c <%= @system_dir %>\schtasks.exe /create /tn <%= task['taskname'] %> /tr "<%= task['taskcommand'] %> <%= task['taskargument'] %>" /sc <%= task['schedule'] %> /mo <%= task['modifier'] %> /st <%= task['starttime'] %> /ru "System" /F > <%= @working_dir %>\create-<%= task['taskname'] %>.log 2>&1
+echo.chef timestamping the logfile
+cmd /c "date /t" >> <%= @working_dir %>\create-<%= task['taskname'] %>.log
+cmd /c "time /t" >> <%= @working_dir %>\create-<%= task['taskname'] %>.log
+<% end -%>
+echo.arbitrary task creation complete
+
+:: cleaup environment vars before exit
+set workingDirectory=
+echo.batch environment var cleanup done
+exit /B 0

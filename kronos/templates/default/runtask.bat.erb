@@ -1,0 +1,27 @@
+:: chef template <%= @basebat_template %>
+:: becomes <%= @basebat %> on the server
+:: generic windows 2003 task runner
+:: <%= @author_name %> / <%= @author_email %>
+:: requires chef / internet connectivity to opsware git repo
+:: initial version 2011:09:27 19:01:00 EST
+
+:: everything needed passed via chef
+:: batch file created via kronos
+
+@echo off
+cls
+
+:: requires task name
+echo.run task
+<% @task_info.each do |task| -%>
+cmd /c <%= @system_dir %>\schtasks.exe /run /tn <%= task['taskname'] %> >> <%= @working_dir %>\run-<%= task['taskname'] %>.log 2>&1
+echo.chef timestamping the logfile
+cmd /c "date /t" >> <%= @working_dir %>\run-<%= task['taskname'] %>.log
+cmd /c "time /t" >> <%= @working_dir %>\run-<%= task['taskname'] %>.log
+<% end -%>
+echo.arbitrary task run complete
+
+:: cleaup environment vars before exit
+set workingDirectory=
+echo.batch environment var cleanup done
+exit /B 0
