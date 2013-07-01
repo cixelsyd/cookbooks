@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+  },
+  "long_description": "Description\n===========\n\nNephele, the Greek cloud nymph, contains some basic utilities for working with cloud services.  At the moment, the only implemented item is a library that will sync a local directory with an S3 bucket.\n\nRequirements\n============\n\nAttributes\n==========\n\nAttributes are used to refer to an encrypted data bag that hold Amazon access information.\n\nUsage\n=====\n\nCheck out s3syncexample for details.",
+  "conflicting": {
+  },
+  "version": "0.1.2",
+  "maintainer": "Smashrun, Inc.",
+  "groupings": {
+  },
+  "suggestions": {
+  },
+  "recommendations": {
+  },
+  "platforms": {
+  },
+  "attributes": {
+  },
+  "maintainer_email": "support@smashrun.com",
+  "providing": {
+  },
+  "description": "Installs/Configures nephele",
+  "name": "nephele",
+  "recipes": {
+  },
+  "license": "Apache 2.0",
+  "replacing": {
+  }
+}

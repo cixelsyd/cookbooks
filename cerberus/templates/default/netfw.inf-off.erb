@@ -1,0 +1,30 @@
+;; Cookbook Name:: cerberus
+;; Recipe:: firewall
+;;
+;; Copyright 2010, Smashrun, Inc.
+;; Author:: <%= @author_name %> <<%= @author_email %>>
+;; initial version 2011:07:11 20:01:00 EST
+;;
+;; templated - <%= @basefw_template %> source file 
+;; becomes <%= @basefw %> on the server
+;; deploy windows firewall rules chef / data bag / template
+;; requires chef / internet connectivity to opsware git repo
+;;
+;; resistance is futile; as-is hand-editing this file
+;; chef is in control
+;;
+[version]
+Signature = "$Windows NT$"
+DriverVer = MM/DD/YYYY,1.2.3456.7890
+
+[DefaultInstall]
+AddReg=ICF.AddReg.DomainProfile
+AddReg=ICF.AddReg.StandardProfile
+
+[ICF.AddReg.DomainProfile]
+
+[ICF.AddReg.StandardProfile]
+;Operational Mode Windows Firewall OFF
+ONHKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","DoNotAllowExceptions",0x00010001,0
+;Operational Mode Windows Firewall OFF
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","EnableFirewall",0x00010001,0

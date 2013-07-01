@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+  },
+  "name": "emailer",
+  "maintainer_email": "support@smashrun.com",
+  "attributes": {
+  },
+  "license": "Apache 2.0",
+  "suggestions": {
+  },
+  "platforms": {
+    "windows": ">= 0.0.0"
+  },
+  "maintainer": "Smashrun, Inc.",
+  "long_description": "Description\n===========\n\nInstalls gems that enable servers to send email.  Library in-lines the text as well as attaches it.\n\nRequirements\n============\n\nAttributes\n==========\n\nWhat you see is what you get.  I have a gmail account that I use as an SMTP server; my example is currently setup for TLS with google.\n\nUsage\n=====\n\nCheck \"example.rb\"",
+  "version": "1.0.1",
+  "recommendations": {
+  },
+  "recipes": {
+  },
+  "groupings": {
+  },
+  "conflicting": {
+  },
+  "replacing": {
+  },
+  "description": "Installs/Configures Mail gem and provides library for quick email messages from servers",
+  "providing": {
+  }
+}

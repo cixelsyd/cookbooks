@@ -1,0 +1,71 @@
+;; Cookbook Name:: cerberus
+;; Recipe:: firewall
+;;
+;; Copyright 2010, Smashrun, Inc.
+;; Author:: <%= @author_name %> <<%= @author_email %>>
+;; initial version 2011:07:11 20:01:00 EST
+;;
+;; templated - <%= @basefw_template %> source file 
+;; becomes <%= @basefw %> on the server
+;; deploy windows firewall rules chef / data bag / template
+;; requires chef / internet connectivity to opsware git repo
+;;
+;; resistance is futile; as-is hand-editing this file
+;; chef is in control
+;;
+[version]
+Signature = "$Windows NT$"
+DriverVer = MM/DD/YYYY,1.2.3456.7890
+
+[DefaultInstall]
+AddReg=ICF.AddReg.DomainProfile
+AddReg=ICF.AddReg.StandardProfile
+
+[ICF.AddReg.DomainProfile]
+
+[ICF.AddReg.StandardProfile]
+
+; THE BASICS - NO NEED TO CHANGE / MODIFY THESE FIRST FOUR
+;
+;Operational Mode Windows Firewall ON
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","DoNotAllowExceptions",0x00010001,0
+;Operational Mode Windows Firewall ON
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","EnableFirewall",0x00010001,0x00000001
+;Disable Notifications
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","DisableNotifications",0x00010001,1
+;Block Unicast Responses to Multicast and Broadcast Packets
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile","DisableUnicastResponsesToMulticastBroadcast",0x00010001,1
+
+; PERMIT ICMP ECHO AND DESTINATION UNREACHABLE
+;
+;Allow ICMP Messages: AllowOutboundDestinationUnreachable
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\IcmpSettings","ICMP Message Type",0x00010001,3
+;Allow ICMP Messages: AllowInboundEchoRequest
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\IcmpSettings","ICMP Message Type",0x00010001,8
+
+; BEGIN UDP ANY / ANY RULES
+;
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","123:udp",0x00000000,"123:udp:*:enabled:NTP / SNTP Client (udp 123)"
+
+; BEGIN TCP ANY / ANY RULES
+;
+<% if @hostname =~ /pww/i -%>
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","80:tcp",0x00000000,"80:tcp:*:enabled:Microsoft IIS webserver 6.0 (tcp http 80)"
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","443:tcp",0x00000000,"443:tcp:*:enabled:Microsoft IIS webserver 6.0 (tcp https 443)"
+<% else -%>
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","80:tcp",0x00000000,"80:tcp:<% @ip_permit.each do |ip| -%><%= ip['ipaddress'] %><%= ip['netmask']%>,<% end -%>:enabled:Microsoft IIS webserver 6.0 (tcp http 80)"
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","443:tcp",0x00000000,"443:tcp:<% @ip_permit.each do |ip| -%><%= ip['ipaddress'] %><%= ip['netmask']%>,<% end -%>:enabled:Microsoft IIS webserver 6.0 (tcp https 443)"
+<% end -%>
+
+; BEGIN CHEF DATA BAG GENERATED RULES
+<% @firewall_rules.each do |rule| -%>
+    <% if rule['protocol'] =~ /ip/ -%>
+        <% ["tcp","udp"].each do |multi| %>
+; open <%= "#{multi}" %> port <%= rule['id'] %>
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","<%= rule['id'] %>:<%= "#{multi}" %>",0x00000000,"<%= rule['id'] %>:<%= "#{multi}" %>:<% @ip_permit.each do |ip| -%><%= ip['ipaddress'] %><%= ip['netmask']%>,<% end -%>:<%= rule['permit'] %>:<%= rule['description'] %>"
+        <% end -%>
+    <% else -%>
+; open <%= rule['protocol'] %> port <%= rule['id'] %>
+HKLM,"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\GloballyOpenPorts\List","<%= rule['id'] %>:<%= rule['protocol'] %>",0x00000000,"<%= rule['id'] %>:<%= rule['protocol'] %>:<% @ip_permit.each do |ip| -%><%= ip['ipaddress'] %><%= ip['netmask']%>,<% end -%>:<%= rule['permit'] %>:<%= rule['description'] %>"
+    <% end -%>
+<% end -%>
