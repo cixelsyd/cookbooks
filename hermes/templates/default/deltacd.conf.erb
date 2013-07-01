@@ -1,0 +1,67 @@
+# chef template <%= @baseconf_template %>
+# becomes <%= @baseconf %> on the server
+# windows rsync daemon "deltacopy" main configuration file
+# <%= @author_name %> / <%= @author_email %>
+# requires chef / internet connectivity to opsware git repo
+# initial version 2011:09:27 19:01:00 EST
+
+use chroot = false
+strict modes = false
+uid = 0
+gid = 0
+secrets file = /cygdrive/c/DeltaCopy/<%= @basesecret %>
+hosts allow = <% @ip_permit.each do |ip| -%><%= ip['ipaddress'] %><%= ip['netmask']%>,<% end -%>
+log file = /cygdrive/c/DeltaCopy/deltacopy_service.log
+
+[d]
+	path = /cygdrive/d/
+	comment = <%= @hostname %>-d
+	read only = false
+	auth users = <%= @deltauser %>
+
+[e]
+	path = /cygdrive/e/
+	comment = <%= @hostname %>-e
+	read only = false
+	auth users = <%= @deltauser %>
+
+<% if node[:hostname] =~ /ww/i -%>
+[services]
+	path = /cygdrive/d/services/
+	comment = <%= @hostname %>-services
+	read only = false
+	auth users = <%= @deltauser %>
+
+[wwwRoot]
+	path = /cygdrive/d/wwwRoot/
+	comment = <%= @hostname %>-docroot
+	read only = false
+	auth users = <%= @deltauser %>
+
+<% end -%>
+
+<% if node[:hostname] =~ /db/i -%>
+[backup]
+	path = /cygdrive/d/MSSQL/Backup/
+	comment = <%= @hostname %>-backup
+	read only = false
+	auth users = <%= @deltauser %>
+
+[data]
+	path = /cygdrive/d/MSSQL/Data/
+	comment = <%= @hostname %>-data
+	read only = false
+	auth users = <%= @deltauser %>
+
+[restore]
+	path = /cygdrive/d/MSSQL/Restore/
+	comment = <%= @hostname %>-restore
+	read only = false
+	auth users = <%= @deltauser %>
+
+[translogs]
+	path = /cygdrive/e/MSSQL/Logs/
+	comment = <%= @hostname %>-translogs
+	read only = false
+	auth users = <%= @deltauser %>
+<% end -%>
