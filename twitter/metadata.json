@@ -1,0 +1,36 @@
+{
+  "maintainer_email": "support@smashrun.com",
+  "name": "twitter",
+  "recommendations": {
+  },
+  "recipes": {
+  },
+  "replacing": {
+  },
+  "providing": {
+  },
+  "maintainer": "Smashrun, Inc.",
+  "suggestions": {
+  },
+  "attributes": {
+  },
+  "dependencies": {
+  },
+  "long_description": "Description\n===========\n\nInstalls twitter gem and Chef library to provide easy tweeting in recipes via Twitter:tweet()\n\nRequirements\n============\n\nRubygems; works on linux and windows!\n\nAttributes\n==========\n\nTune to set temp and location of your encrypted data bag secret, the name of your encrypted data bag for secret twitter application settings, the name of your twitter application, and any default tags to tweet at.  Note: my windows install still is using old ruby and old chef, so the databag and user attributes are arrays.  This should change.\n\nUsage\n=====\n\nCheck out full functioned example.rb for details by adding \"twitter\" and \"twitter::example\" to the run list, then let chef run twice.  Version 1.0.8 of this cookbook adds support for chef_gem and cleans up a few minor items.  It is still largely unchanged from previous versions.\n\n1\nregister your [:twitter][:user] app account\nhttps://dev.twitter.com/\n\n2\ncreate and distribute a pre-shared \"encrypted_data_bag_secret\" file to all nodes (if you do not already have one)\nhttp://wiki.opscode.com/display/chef/Encrypted+Data+Bags\n\n2\ncreate the encrypted [:twitter][:databag] data bag to hold your [:twitter][:user] secret app settings\n\nknife data bag create --secret-file /path/encrypted_data_bag_secret tweeter twitter_name\n\n3\nedit json secret [:twitter][:user] app settings inside your [:twitter][:databag] encrypted data bag\n\nknife data bag edit --secret-file  /path/encrypted_data_bag_secret tweeter twitter_name\n\n{\n  \"id\": \"twitter_name\",\n\"consumer_key\": \"string\",\n\"consumer_secret\": \"string\",\n\"oauth_token\": \"string\",\n\"oauth_token_secret\": \"string\"\n}\n\n4\n\n  node[:twitter][:admin].each { |a|\n    Tweeter.tweet(a, \"if you use @nikeplus you should have an account on http://bit.ly/smashrun smashrun\", settings[\"consumer_key\"], settings[\"consumer_secret\"], settings[\"oauth_token\"], settings[\"oauth_token_secret\"]) }\n\n5\nprofit",
+  "version": "1.0.8",
+  "groupings": {
+  },
+  "conflicting": {
+  },
+  "platforms": {
+    "windows": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "arch": ">= 0.0.0"
+  },
+  "license": "Apache 2.0",
+  "description": "Installs/Configures tweeter the twitterer for windows redhat centos fedora ubuntu debian"
+}

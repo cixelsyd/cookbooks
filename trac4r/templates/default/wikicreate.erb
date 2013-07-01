@@ -1,0 +1,33 @@
+= <%= @fqdn %> =
+
+=== <%= @kernel_name %> system basics ===
+[[Image(<%= @pnpbaseurl %>/image?host=<%= @fqdn %>&srv=_HOST_)]]
+||= ipaddress =||||= ip6address =||||= macaddress =||
+|| <%= @ipaddress %> |||| <%= @ip6address %> |||| <%= @macaddress %> ||
+||= host =||||= domain =||||= kernel_arch =||||= OS =||||= OS version =||
+|| <%= @host %> |||| <%= @domain %> |||| <%= @kernel_arch %> |||| <%= @os %> |||| <%= @osversion %> ||
+
+=== system cpu load ===
+[[Image(<%= @pnpbaseurl %>/image?host=<%= @fqdn %>&srv=cpu_load-15mins)]]
+
+=== ram used ===
+[[Image(<%= @pnpbaseurl %>/image?host=<%= @fqdn %>&srv=memory_ram-used)]]
+
+=== chef recipes ===
+||= position =||||= recipe =||
+<% x = 0 -%>
+<% @recipes.each do |r| -%>||<%= x %>||[wiki:Cookbook_<%= r.split('::')[0] %> <%= r %>]||
+    <% x += 1 %>
+<% end -%>
+
+=== chef roles ===
+||= position =||||= role =||
+<% x = 0 -%>
+<% @roles.each do |r| -%>||<%= x %>||[wiki:Cookbook_<%= r.split('::')[0] %> <%= r %>]||
+    <% x += 1 %>
+<% end -%>
+
+
+auto-generated wiki maintained by [wiki:Cookbook_continuity continuity] and created by [wiki:craigs craigs]
+  '''do not edit this page'''
+human beings should add <%= @host %>-specific notes to [wiki:hostnotes_<%= @fqdn %> THIS] "hostnotes" page
